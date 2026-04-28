@@ -110,8 +110,8 @@ router.post("/seller/verification/submit", async (req, res) => {
   try {
     const profile = await SellerProfile.findOne({ userId });
     if (!profile) return res.status(400).json({ message: "Seller profile not found" });
-    if (!profile.profilePhotoUrl || !profile.idDocumentUrl) {
-      return res.status(400).json({ message: "Please upload profile photo and ID document first" });
+    if (!profile.idDocumentUrl) {
+      return res.status(400).json({ message: "Please upload ID document first" });
     }
     profile.verification = profile.verification || {};
     profile.verification.status = "under_review";
@@ -129,7 +129,7 @@ router.get("/admin/verification/pending", async (req, res) => {
   if (!admin) return;
   try {
     const items = await SellerProfile.find({ "verification.status": "under_review" })
-      .select("userId fullName businessName phone city country profilePhotoUrl idDocumentUrl createdAt verification.submittedAt")
+      .select("userId fullName businessName phone city country profilePhotoUrl idDocumentUrl selfieUrl createdAt verification.submittedAt")
       .sort({ "verification.submittedAt": 1 });
     res.json({ items });
   } catch (e) {
